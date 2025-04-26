@@ -226,11 +226,17 @@
     function updateList() {
       const list = document.getElementById('itemList');
       list.innerHTML = items.map((i, idx) => `
-        <div>
-          📌 ${i.name} - ${i.amount}개 x ${i.price}${i.currency} = ${getTotalValue(i).toLocaleString()}원 
-          [${i.categories.join(', ')} | ${i.date}]
-          <button class="edit-btn" onclick="editItem(${idx})">✏️</button>
-          <button class="action-btn" onclick="deleteItem(${idx})">🗑️</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="text-align: left;">
+            <div>📌 ${i.name} - ${i.amount}개 x ${i.price}${i.currency} = ${getTotalValue(i).toLocaleString()}원</div>
+            <div style="margin-top: 4px; font-size: 13px; color: #555;">
+              [${i.categories.join(', ')} | ${i.date}]
+            </div>
+          </div>
+          <div>
+            <button class="edit-btn" onclick="editItem(${idx})">✏️</button>
+            <button class="action-btn" onclick="deleteItem(${idx})">🗑️</button>
+          </div>
         </div>
       `).join('');
     }
@@ -238,9 +244,48 @@
     function updateCategoryButtons() {
       const container = document.getElementById('categoryButtons');
       const allCategories = [...new Set(items.flatMap(i => i.categories))];
-      container.innerHTML = allCategories.map(cat => `
-        <button onclick="toggleCategory('${cat}')" class="${selectedCategories.has(cat) ? 'active' : ''}">${cat}</button>
+      
+      if (allCategories.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+
+      // 전체 버튼 텍스트: 전체 선택 또는 전체 해제
+      const isAllSelected = selectedCategories.size === allCategories.length;
+      const allButtonText = isAllSelected ? '전체 해제' : '전체 선택';
+
+
+      // 전체 선택/해제 버튼 추가
+      html += `
+        <button onclick="toggleAllCategories()" 
+          class="${isAllSelected || selectedCategories.size === 0 ? 'active' : ''}">
+          ${allButtonText}
+        </button>
+      `;
+
+      html += allCategories.map(cat => `
+        <button onclick="toggleCategory('${cat}')" class="${selectedCategories.has(cat) ? 'active' : ''}">
+          ${cat}
+        </button>
       `).join('');
+
+      container.innerHTML = html;
+    }
+
+    function toggleAllCategories() {
+      const allCategories = [...new Set(items.flatMap(i => i.categories))];
+
+      if (selectedCategories.size === allCategories.length) {
+        selectedCategories.clear();
+      } else {
+        selectedCategories = new Set(allCategories);
+      }
+
+      updateCategoryButtons();
+      updateChart();
+      updateTotal();
     }
 
     function toggleCategory(cat) {
