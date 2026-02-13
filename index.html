@@ -320,7 +320,7 @@
         dividendRecords, // 배당금 데이터도 저장
         exchangeRate: getExchangeRate()
       };
-      await setDoc(doc(db, 'dev_users', currentUser.uid, 'charts', chartName), {
+      await setDoc(doc(db, 'users', currentUser.uid, 'charts', chartName), {
         jsonData: JSON.stringify(data)
       });
       alert(`'${chartName}' 이름으로 저장되었습니다.`);
@@ -330,7 +330,7 @@
     async function loadChartList() {
       const chartListDiv = document.getElementById('chartList');
       chartListDiv.innerHTML = '';
-      const chartsRef = collection(db, 'dev_users', currentUser.uid, 'charts');
+      const chartsRef = collection(db, 'users', currentUser.uid, 'charts');
       const snapshot = await getDocs(chartsRef);
 
       snapshot.forEach(docSnap => {
@@ -354,7 +354,7 @@
 
     // 모듈 스코프 함수를 전역으로 노출 (HTML onclick에서 접근 가능하도록)
     window.loadChartClick = async (chartName) => {
-      const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+      const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
       const chartDoc = await getDoc(chartDocRef);
       if (chartDoc.exists()) {
         const data = JSON.parse(chartDoc.data().jsonData);
@@ -366,7 +366,7 @@
 
     window.deleteChartClick = async (selfElement, chartName) => {
         if(!confirm(`'${chartName}' 차트를 삭제하시겠습니까?`)) return;
-        const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+        const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
         try {
           await deleteDoc(chartDocRef);
           alert("삭제 완료!");
