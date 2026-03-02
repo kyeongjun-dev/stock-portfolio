@@ -548,7 +548,7 @@
           dividendRecords,
           exchangeRate: getExchangeRate()
         };
-        await setDoc(doc(db, 'dev_users', currentUser.uid, 'charts', chartName), {
+        await setDoc(doc(db, 'users', currentUser.uid, 'charts', chartName), {
           jsonData: JSON.stringify(data)
         });
         window.showToast(`'${chartName}' 이름으로 저장되었습니다.`, 'success');
@@ -563,7 +563,7 @@
       const chartListDiv = document.getElementById('chartList');
       chartListDiv.innerHTML = '<p style="color:var(--text-muted);">불러오는 중...</p>';
       try {
-      const chartsRef = collection(db, 'dev_users', currentUser.uid, 'charts');
+      const chartsRef = collection(db, 'users', currentUser.uid, 'charts');
       const snapshot = await getDocs(chartsRef);
       chartListDiv.innerHTML = '';
 
@@ -596,7 +596,7 @@
     // 모듈 스코프 함수를 전역으로 노출 (HTML onclick에서 접근 가능하도록)
     window.loadChartClick = async (chartName) => {
       try {
-        const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+        const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
         const chartDoc = await getDoc(chartDocRef);
         if (chartDoc.exists()) {
           const data = JSON.parse(chartDoc.data().jsonData);
@@ -613,7 +613,7 @@
 
     window.downloadChartJSON = async (chartName) => {
       try {
-        const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+        const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
         const chartDoc = await getDoc(chartDocRef);
         if (!chartDoc.exists()) { window.showToast('차트를 찾을 수 없습니다.', 'error'); return; }
         const data = JSON.parse(chartDoc.data().jsonData);
@@ -630,7 +630,7 @@
 
     window.downloadChartCSV = async (chartName) => {
       try {
-        const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+        const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
         const chartDoc = await getDoc(chartDocRef);
         if (!chartDoc.exists()) { window.showToast('차트를 찾을 수 없습니다.', 'error'); return; }
         const data = JSON.parse(chartDoc.data().jsonData);
@@ -648,7 +648,7 @@
 
     window.deleteChartClick = async (selfElement, chartName) => {
         if(!confirm(`'${chartName}' 차트를 삭제하시겠습니까?`)) return;
-        const chartDocRef = doc(db, 'dev_users', currentUser.uid, 'charts', chartName);
+        const chartDocRef = doc(db, 'users', currentUser.uid, 'charts', chartName);
         try {
           await deleteDoc(chartDocRef);
           window.showToast("삭제 완료!", 'success');
